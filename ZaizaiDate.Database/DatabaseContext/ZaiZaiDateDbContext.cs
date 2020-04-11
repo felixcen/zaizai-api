@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ZaizaiDate.Database.Entity;
 
 namespace ZaizaiDate.Database.DatabaseContext
 {
@@ -14,5 +15,7 @@ namespace ZaizaiDate.Database.DatabaseContext
         protected ZaiZaiDateDbContext()
         {
         }
+
+        public DbSet<AppUser> Users { get; set; }
     }
 }

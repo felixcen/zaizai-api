@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZaizaiDate.Database.DatabaseContext;
 
 namespace ZaizaiDate.Database.Migration.Migrations
 {
     [DbContext(typeof(ZaiZaiDateDbContext))]
-    partial class ZaiZaiDateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200411043050_AddedUserEntity")]
+    partial class AddedUserEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

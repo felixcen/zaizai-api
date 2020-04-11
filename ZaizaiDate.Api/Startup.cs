@@ -29,7 +29,9 @@ namespace ZaizaiDate.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ZaiZaiDateDbContext>(a =>
-            a.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            a.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), sqliteOptionsAction
+            => sqliteOptionsAction.MigrationsAssembly("ZaizaiDate.Database.Migration"))
+            ); 
 
             services.AddCors(options => options.AddPolicy(name: AllowAllOriginsPolicy,
                               builder =>
