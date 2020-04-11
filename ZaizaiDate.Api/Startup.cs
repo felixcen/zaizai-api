@@ -12,25 +12,56 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ZaizaiDate.Business.Service;
+using ZaizaiDate.Common.Settings;
 using ZaizaiDate.Database.DatabaseContext;
 
 namespace ZaizaiDate.Api
 {
     public class Startup
     {
+        private readonly IWebHostEnvironment _env;
+
         private readonly string AllowAllOriginsPolicy = "_allowAllOriginPolicy";
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+
+        public Startup(IWebHostEnvironment env)
         {
-            Configuration = configuration;
+
+            _env = env ?? throw new ArgumentNullException(nameof(env));
+
+            var builder = new ConfigurationBuilder()
+                     .SetBasePath(_env.ContentRootPath)
+                     .AddJsonFile("appsettings.json",
+                                  optional: false,
+                                    reloadOnChange: true).AddEnvironmentVariables();
+
+            if (_env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
+            Configuration = builder.Build();
+
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            SecretSettings secretSettings;
+            if (_env.IsDevelopment())
+            {
+                secretSettings = Configuration.GetSection("AppSecrets").Get<SecretSettings>();
+            }
+            else
+            {
+                // can be read from somewhere else such as docker secret or aws secret 
+                secretSettings = new SecretSettings();
+            }
+
+            services.AddSingleton<ISecretSettings>(secretSettings);
             services.AddDbContext<ZaiZaiDateDbContext>(a =>
-                a.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), 
+                a.UseSqlite(secretSettings.DatabaseConnectionString,
                     option => option.MigrationsAssembly("ZaizaiDate.Database.Migrations")));
 
             services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -39,7 +70,7 @@ namespace ZaizaiDate.Api
                               builder =>
                               {
                                   builder.AllowAnyOrigin().AllowAnyHeader()
-                                                  .AllowAnyMethod(); 
+                                                  .AllowAnyMethod();
                               }));
 
             services.AddControllers();
@@ -66,10 +97,10 @@ namespace ZaizaiDate.Api
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers().RequireCors(AllowAllOriginsPolicy) ;
+                endpoints.MapControllers().RequireCors(AllowAllOriginsPolicy);
             });
 
-           
+
         }
     }
 }

@@ -9,9 +9,9 @@ namespace ZaizaiDate.Business.Service
 {
     public interface IAuthenticationService
     {
-        Task<AppUser> RegisterAsync(IRegisterUserModel user);
+        Task<AppUser> RegisterAsync(IRegisterUserDto user);
 
-        Task<AppUser> LoginAsync(string username, string password);
+        Task<AppUser> LoginAsync(IUserLoginDto user);
 
         Task<bool> UserExists(string username);
     }

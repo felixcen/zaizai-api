@@ -18,25 +18,25 @@ namespace ZaizaiDate.Business.Service
             _dbContext = dbContext;
         }
 
-        public async Task<AppUser> LoginAsync(string username, string password)
+        public async Task<AppUser> LoginAsync(IUserLoginDto user)
         {
-            if (password is null)
+            if (user is null)
             {
-                throw new ArgumentNullException(nameof(password));
+                throw new ArgumentNullException(nameof(user));
             }
 
-            var user = await _dbContext.Users.SingleOrDefaultAsync(a => a.UserName == username).ConfigureAwait(false);
+            var userCheck = await _dbContext.Users.SingleOrDefaultAsync(a => a.UserName == user.UserName).ConfigureAwait(false);
 
-            if (user == null)
+            if (userCheck == null)
                 return null;
 
-            if(!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            if(!VerifyPasswordHash(user.Password, userCheck.PasswordHash, userCheck.PasswordSalt))
             {
                 return null;
             }
 
 
-            return user;
+            return userCheck;
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
@@ -46,14 +46,14 @@ namespace ZaizaiDate.Business.Service
             var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             for(int i = 0; i < computedHash.Length; i++)
             {
-                if (computedHash[i] != password[i])
+                if (computedHash[i] != passwordHash[i])
                     return false;
             }
 
             return true;
         }
 
-        public async Task<AppUser> RegisterAsync(IRegisterUserModel user)
+        public async Task<AppUser> RegisterAsync(IRegisterUserDto user)
         {
             if (user is null)
             {
