@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +15,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using ZaizaiDate.Business.Service;
 using ZaizaiDate.Common.Settings;
 using ZaizaiDate.Database.DatabaseContext;
@@ -58,6 +64,7 @@ namespace ZaizaiDate.Api
                 // can be read from somewhere else such as docker secret or aws secret 
                 secretSettings = new SecretSettings();
             }
+            services.AddMvc();
 
             services.AddSingleton<ISecretSettings>(secretSettings);
             services.AddDbContext<ZaiZaiDateDbContext>(a =>
@@ -73,6 +80,26 @@ namespace ZaizaiDate.Api
                                                   .AllowAnyMethod();
                               }));
 
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+                    {
+                        options.RequireHttpsMetadata = false;
+                        options.SaveToken = true;
+
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretSettings.JwtSigningKey)),
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+                            ClockSkew = TimeSpan.FromMinutes(5)
+                        };
+                    });
+
             services.AddControllers();
         }
 
@@ -83,23 +110,16 @@ namespace ZaizaiDate.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-
-            }
 
             app.UseHttpsRedirection();
             app.UseRouting();
-
-
-
             app.UseCors(AllowAllOriginsPolicy);
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers().RequireCors(AllowAllOriginsPolicy);
             });
-
 
         }
     }

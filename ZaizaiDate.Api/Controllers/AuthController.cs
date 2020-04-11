@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,7 @@ namespace ZaizaiDate.Api.Controllers
             _secretSettings = settings;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserViewModel user)
         {
@@ -44,6 +46,7 @@ namespace ZaizaiDate.Api.Controllers
             return Ok();
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginViewModel user)
         {
@@ -58,20 +61,20 @@ namespace ZaizaiDate.Api.Controllers
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userLogin.Id.ToString(CultureInfo.InvariantCulture)),
-                new Claim(ClaimTypes.Name, userLogin.UserName),
+                new Claim("uid", userLogin.Id.ToString(CultureInfo.InvariantCulture))
             };
              
             string jwtSigningKey = _secretSettings.JwtSigningKey;
-            var symmetricKey =  new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSigningKey));
+            var symmetricKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey));
             var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(12),
-                SigningCredentials = credentials
+                Expires = DateTime.UtcNow.AddHours(12),
+                SigningCredentials = credentials,
+                Audience = "http://localhost",
+                Issuer = "http://localhost"
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -79,6 +82,14 @@ namespace ZaizaiDate.Api.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return Ok(new { authToken = tokenHandler.WriteToken(token) });
+        }
+
+
+   
+        [HttpGet("info")]
+        public IActionResult GetInfo()
+        {
+            return Ok(DateTimeOffset.Now.ToString(CultureInfo.CurrentCulture));
         }
     }
 }
