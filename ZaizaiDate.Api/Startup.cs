@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ZaizaiDate.Business.Service;
 using ZaizaiDate.Database.DatabaseContext;
 
 namespace ZaizaiDate.Api
@@ -29,9 +30,10 @@ namespace ZaizaiDate.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ZaiZaiDateDbContext>(a =>
-            a.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), sqliteOptionsAction
-            => sqliteOptionsAction.MigrationsAssembly("ZaizaiDate.Database.Migration"))
-            ); 
+                a.UseSqlite(Configuration.GetConnectionString("DefaultConnection"), 
+                    option => option.MigrationsAssembly("ZaizaiDate.Database.Migrations")));
+
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             services.AddCors(options => options.AddPolicy(name: AllowAllOriginsPolicy,
                               builder =>
@@ -39,6 +41,7 @@ namespace ZaizaiDate.Api
                                   builder.AllowAnyOrigin().AllowAnyHeader()
                                                   .AllowAnyMethod(); 
                               }));
+
             services.AddControllers();
         }
 

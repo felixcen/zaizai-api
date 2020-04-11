@@ -6,7 +6,15 @@ using System.Text;
 namespace ZaizaiDate.Database.Entity
 {
     public class AppUser
-    {
+    { 
+        public static AppUser Create(string username)
+        {
+            return new AppUser()
+            {
+                UserName = username
+            };
+        }
+
         public long Id { get; set; }
 
         [MaxLength(256)]

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -14,10 +18,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ZaizaiDate.Database.Migration\ZaizaiDate.Database.Migration.csproj" />
+    <ProjectReference Include="..\ZaizaiDate.Business\ZaizaiDate.Business.csproj" />
+    <ProjectReference Include="..\ZaizaiDate.Common\ZaizaiDate.Common.csproj" />
+    <ProjectReference Include="..\ZaizaiDate.Database.Migrations\ZaizaiDate.Database.Migrations.csproj" />
     <ProjectReference Include="..\ZaizaiDate.Database\ZaizaiDate.Database.csproj" />
   </ItemGroup>
 

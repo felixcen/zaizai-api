@@ -7,6 +7,11 @@ namespace ZaizaiDate.Database.Migration.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            if (migrationBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(migrationBuilder));
+            }
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -26,6 +31,11 @@ namespace ZaizaiDate.Database.Migration.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            if (migrationBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(migrationBuilder));
+            }
+
             migrationBuilder.DropTable(
                 name: "Users");
         }
