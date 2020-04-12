@@ -17,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using ZaizaiDate.Api.Extensions;
 using ZaizaiDate.Business.Service;
 using ZaizaiDate.Common.Settings;
 using ZaizaiDate.Database.DatabaseContext;
@@ -64,8 +65,7 @@ namespace ZaizaiDate.Api
                 // can be read from somewhere else such as docker secret or aws secret 
                 secretSettings = new SecretSettings();
             }
-            services.AddMvc();
-
+            
             services.AddSingleton<ISecretSettings>(secretSettings);
             services.AddDbContext<ZaiZaiDateDbContext>(a =>
                 a.UseSqlite(secretSettings.DatabaseConnectionString,
@@ -80,25 +80,7 @@ namespace ZaizaiDate.Api
                                                   .AllowAnyMethod();
                               }));
 
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-            }).AddJwtBearer(options =>
-                    {
-                        options.RequireHttpsMetadata = false;
-                        options.SaveToken = true;
-
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuerSigningKey = true,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretSettings.JwtSigningKey)),
-                            ValidateIssuer = false,
-                            ValidateAudience = false,
-                            ClockSkew = TimeSpan.FromMinutes(5)
-                        };
-                    });
+            services.RegisterJwtAuthentication(secretSettings);
 
             services.AddControllers();
         }

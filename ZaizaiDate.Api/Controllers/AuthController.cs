@@ -86,10 +86,11 @@ namespace ZaizaiDate.Api.Controllers
 
 
    
+        [AllowAnonymous]
         [HttpGet("info")]
         public IActionResult GetInfo()
         {
-            return Ok(DateTimeOffset.Now.ToString(CultureInfo.CurrentCulture));
+            return Ok( new { Time = DateTimeOffset.Now.ToString(CultureInfo.CurrentCulture) });
         }
     }
 }
