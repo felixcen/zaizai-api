@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -74,7 +75,9 @@ namespace ZaizaiDate.Api
                 a.UseSqlite(secretSettings.DatabaseConnectionString,
                     option => option.MigrationsAssembly("ZaizaiDate.Database.Migrations")));
 
+            services.AddAutoMapper(typeof(Startup).Assembly);
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IUserManagementService, UserManagementService>();
 
             services.AddCors(options => options.AddPolicy(name: AllowAllOriginsPolicy,
                               builder =>
