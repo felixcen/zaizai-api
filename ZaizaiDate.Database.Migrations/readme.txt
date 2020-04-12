@@ -1,6 +1,6 @@
 ﻿
 
-cd .\ZaizaiDate.Database.Migration\
+cd .\ZaizaiDate.Database.Migrations
 
 
 dotnet ef --startup-project ../ZaizaiDate.Api/ migrations add Initial

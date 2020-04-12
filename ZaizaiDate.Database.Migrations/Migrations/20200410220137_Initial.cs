@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ZaizaiDate.Database.Migration.Migrations
+namespace ZaizaiDate.Database.Migrations
 {
     public partial class Initial : Microsoft.EntityFrameworkCore.Migrations.Migration
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ZaizaiDate.Database.Migration.Migrations
+namespace ZaizaiDate.Database.Migrations
 {
     public partial class AddedUserEntity : Microsoft.EntityFrameworkCore.Migrations.Migration
     {

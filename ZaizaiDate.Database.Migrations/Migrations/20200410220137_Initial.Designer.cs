@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZaizaiDate.Database.DatabaseContext;
 
-namespace ZaizaiDate.Database.Migration.Migrations
+namespace ZaizaiDate.Database.Migrations
 {
     [DbContext(typeof(ZaiZaiDateDbContext))]
     [Migration("20200410220137_Initial")]
