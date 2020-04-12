@@ -71,7 +71,8 @@ namespace ZaizaiDate.Api.Controllers
 
             var claims = new[]
             {
-                new Claim("uid", userLogin.Id.ToString(CultureInfo.InvariantCulture))
+                new Claim("uid", userLogin.Id.ToString(CultureInfo.InvariantCulture)),
+                new Claim("uname", userLogin.UserName)
             };
              
             string jwtSigningKey = _secretSettings.JwtSigningKey;
