@@ -35,7 +35,7 @@ namespace ZaizaiDate.Api.Controllers
         {
             if (user is null)
             {
-                return BadRequest();
+                return BadRequest("User information is required.");
             }
 
             if (await _authenticationService.UserExists(user.UserName).ConfigureAwait(false))

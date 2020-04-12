@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using ZaizaiDate.Api.Extensions;
 using ZaizaiDate.Business.Service;
+using ZaizaiDate.Common.Exceptions;
 using ZaizaiDate.Common.Settings;
 using ZaizaiDate.Database.DatabaseContext;
 
@@ -91,6 +94,39 @@ namespace ZaizaiDate.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler( builder=> {
+                    builder.Run(async context => {
+                       
+                        var error = context.Features.Get<IExceptionHandlerFeature>();
+                        
+                        // TODO: add logger
+                        Console.WriteLine(error?.Error);
+
+                        if (error?.Error is FileNotFoundException)
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                            context.Response.AddApplicationError(error.Error.Message);
+                            
+                            await context.Response.WriteAsync("File not found").ConfigureAwait(false);
+
+                        }else if (error?.Error is ServerHandledException)
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                            context.Response.AddApplicationError(error.Error.Message);
+                            await context.Response.WriteAsync(error.Error.Message).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                            context.Response.AddApplicationError("Unexpected server error");
+                            await context.Response.WriteAsync("Unexpected server error").ConfigureAwait(false);
+                        }
+                    });
+                });
             }
 
             app.UseHttpsRedirection();
