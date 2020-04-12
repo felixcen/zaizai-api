@@ -38,6 +38,11 @@ namespace ZaizaiDate.Api.Controllers
                 return BadRequest("User information is required.");
             }
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage)));
+            }
+
             if (await _authenticationService.UserExists(user.UserName).ConfigureAwait(false))
                 return BadRequest("User already exists");
 
@@ -53,6 +58,11 @@ namespace ZaizaiDate.Api.Controllers
             if (user is null)
             {
                 return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage)));
             }
 
             var userLogin =  await _authenticationService.LoginAsync(user).ConfigureAwait(false);
