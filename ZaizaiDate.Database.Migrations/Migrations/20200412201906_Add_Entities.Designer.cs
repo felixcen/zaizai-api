@@ -9,8 +9,8 @@ using ZaizaiDate.Database.DatabaseContext;
 namespace ZaizaiDate.Database.Migrations
 {
     [DbContext(typeof(ZaiZaiDateDbContext))]
-    [Migration("20200412044814_ExtendedUserClass")]
-    partial class ExtendedUserClass
+    [Migration("20200412201906_Add_Entities")]
+    partial class Add_Entities
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,10 +25,12 @@ namespace ZaizaiDate.Database.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("City")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(200);
 
                     b.Property<string>("Country")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(200);
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("TEXT");
@@ -37,13 +39,16 @@ namespace ZaizaiDate.Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Gender")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(40);
 
                     b.Property<string>("Interests")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(2000);
 
                     b.Property<string>("Introduction")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(2000);
 
                     b.Property<string>("KnownAs")
                         .HasColumnType("TEXT");
@@ -52,12 +57,18 @@ namespace ZaizaiDate.Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LookingFor")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(2000);
 
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("BLOB");
 
                     b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
                     b.Property<string>("UserName")
@@ -80,13 +91,20 @@ namespace ZaizaiDate.Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(2000);
 
                     b.Property<bool>("IsMain")
                         .HasColumnType("INTEGER");
 
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<string>("Url")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(2000);
 
                     b.Property<long>("UserId")
                         .HasColumnType("INTEGER");
